@@ -85,7 +85,7 @@ export const hookLessons: HookLesson[] = [
     guidedChallenge:
       'Add profiling marks to compare filtered list performance with and without memoization.',
     recap: 'Memoization is a performance tool, not a correctness tool.',
-    availability: 'coming-soon',
+    availability: 'available',
   },
   {
     slug: 'use-callback',
@@ -98,7 +98,7 @@ export const hookLessons: HookLesson[] = [
       'Using useCallback everywhere rather than where referential stability is needed.',
     guidedChallenge: 'Pair memoized children with callbacks and observe rerender differences.',
     recap: 'Callback memoization is for inter-component contracts and effect dependencies.',
-    availability: 'coming-soon',
+    availability: 'available',
   },
 ]
 

@@ -3,7 +3,9 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 import { ContextThemeDemo } from '@/components/learning/interactive/context-theme-demo'
+import { CallbackStabilityDemo } from '@/components/learning/interactive/callback-stability-demo'
 import { EffectDependencyDemo } from '@/components/learning/interactive/effect-dependency-demo'
+import { MemoFilterDemo } from '@/components/learning/interactive/memo-filter-demo'
 import { RefSignalDemo } from '@/components/learning/interactive/ref-signal-demo'
 import { StateCounterDemo } from '@/components/learning/interactive/state-counter-demo'
 import { LessonShell } from '@/components/learning/lesson-shell'
@@ -47,6 +49,8 @@ export default async function HookLessonPage({ params }: { params: Promise<{ slu
     'use-effect': <EffectDependencyDemo />,
     'use-ref': <RefSignalDemo />,
     'use-context': <ContextThemeDemo />,
+    'use-memo': <MemoFilterDemo />,
+    'use-callback': <CallbackStabilityDemo />,
   }
 
   return (
