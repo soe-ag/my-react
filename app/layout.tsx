@@ -44,7 +44,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <LearningProgressProvider lessonSlugs={trackedLessons}>
-          <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
+          <header className="sticky top-0 z-20 border-b border-white/20 bg-background/75 shadow-[0_8px_30px_oklch(0.42_0.08_220/0.12)] backdrop-blur-xl">
             <MainNav totalLessons={trackedLessons.length} />
           </header>
           {children}
