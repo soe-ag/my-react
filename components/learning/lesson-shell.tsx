@@ -128,6 +128,29 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
 
         <TabsContent value="explore" className="pt-2">
           <div className="space-y-4">
+            <Card className="border-white/30 bg-[linear-gradient(160deg,oklch(1_0_0/.92),oklch(0.96_0.02_68/.84))] shadow-[0_8px_24px_oklch(0.45_0.08_186/0.12)]">
+              <CardHeader>
+                <CardTitle>Explore Walkthrough</CardTitle>
+                <CardDescription>
+                  Follow these steps first so the interactive behavior is easier to understand.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
+                  Goal: {lesson.exploreGoal}
+                </p>
+                <ol className="space-y-2 text-sm leading-7 text-muted-foreground">
+                  {lesson.exploreSteps.map((step, index) => (
+                    <li key={step} className="rounded-md border bg-background px-3 py-2">
+                      <span className="mr-2 inline-block font-semibold text-foreground/80">
+                        Step {index + 1}:
+                      </span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </CardContent>
+            </Card>
             {interactivePanel}
             <Card className="border-white/30 bg-[linear-gradient(160deg,oklch(1_0_0/.92),oklch(0.96_0.02_68/.84))] shadow-[0_8px_24px_oklch(0.45_0.08_186/0.12)]">
               <CardHeader>
@@ -138,6 +161,9 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <LessonCodeBlock code={lesson.exploreCode} />
+                <p className="text-sm font-medium text-foreground/85">
+                  What to watch while testing
+                </p>
                 <ul className="mt-3 space-y-2 text-sm leading-7 text-muted-foreground">
                   {lesson.exploreNotes.map((note) => (
                     <li key={note} className="rounded-md border bg-background px-3 py-2">

@@ -52,7 +52,7 @@ export function HooksLessonGrid({ lessons }: HooksLessonGridProps) {
               </div>
               <CardDescription>{lesson.tagline}</CardDescription>
             </CardHeader>
-            <CardContent className="relative z-20 flex h-full flex-col gap-3 text-sm text-muted-foreground">
+            <CardContent className="flex h-full flex-col gap-3 text-sm text-muted-foreground">
               <p className="flex-1">{lesson.problem}</p>
               {lesson.availability !== 'available' ? (
                 <p className="text-xs">Planned in the next sprint.</p>

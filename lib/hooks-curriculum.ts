@@ -10,6 +10,8 @@ export type HookLesson = {
   explainLines: string[]
   sampleCode: string
   exploreCode: string
+  exploreGoal: string
+  exploreSteps: string[]
   exploreNotes: string[]
   commonMistake: string
   guidedChallenge: string
@@ -56,6 +58,14 @@ function incrementDirect() {
 function incrementFunctional() {
   setCount((previous) => previous + step)
 }`,
+    exploreGoal:
+      'See why functional updates are safer when the next value depends on previous state.',
+    exploreSteps: [
+      'Select Step 5, then click Direct Update two times quickly.',
+      'Press Reset, keep Step 5, then click Functional Update two times quickly.',
+      'Compare the count and timeline entries after both runs.',
+      'Summarize which update style is more reliable and why.',
+    ],
     exploreNotes: [
       'Step buttons mutate the step state that feeds both increment handlers.',
       'Direct Update uses count from current render closure.',
@@ -128,6 +138,14 @@ function incrementFunctional() {
     window.clearTimeout(timeoutId)
   }
 }, [query, onlyStable])`,
+    exploreGoal:
+      'Observe that dependency changes trigger a cleanup of previous effect work before rerun.',
+    exploreSteps: [
+      'Type into Search Query slowly and watch the effect timeline.',
+      'Toggle stable-only mode and note new timeline events.',
+      'Change query quickly multiple times and wait for latest sync result.',
+      'Identify where old work is canceled and the newest result wins.',
+    ],
     exploreNotes: [
       'Typing in query updates dependency state and schedules a rerun.',
       'Toggling stable mode changes a second dependency and invalidates previous work.',
@@ -199,6 +217,14 @@ function trackInteraction() {
 function syncRefToUi() {
   setDisplayCount(interactionCountRef.current)
 }`,
+    exploreGoal:
+      'Understand that refs can change silently and only become visible when copied into state.',
+    exploreSteps: [
+      'Type in the input and use Focus/Clear controls several times.',
+      'Notice the displayed synced count does not update immediately.',
+      'Click Sync ref count to copy ref value into visible state.',
+      'Repeat and confirm ref changes are not reactive by themselves.',
+    ],
     exploreNotes: [
       'Typing and focus actions increment an internal mutable ref counter.',
       'The ref change alone does not rerender the count display.',
@@ -263,6 +289,14 @@ function Toolbar() {
 )
 
 return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>`,
+    exploreGoal:
+      'See how provider state updates propagate to all consumers through a shared context value.',
+    exploreSteps: [
+      'Read initial Mode and Accent values in consumer A.',
+      'Use Toggle mode and Toggle accent in consumer B.',
+      'Verify consumer A reflects every update instantly.',
+      'Explain how one provider value drives both consumers.',
+    ],
     exploreNotes: [
       'Toggle buttons update mode/accent in provider state.',
       'Provider value object is memoized from mode and accent dependencies.',
@@ -324,6 +358,13 @@ return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>`,
 )
 
 const visibleItems = useMemoEnabled ? memoizedResult : directResult`,
+    exploreGoal: 'Compare memoized vs non-memoized computation during unrelated rerenders.',
+    exploreSteps: [
+      'Keep Using useMemo enabled and click Unrelated rerender several times.',
+      'Switch to No memoization and click Unrelated rerender again.',
+      'Apply a query and category filter, then repeat rerender clicks.',
+      'Describe when caching helps and when it adds little value.',
+    ],
     exploreNotes: [
       'Search and category updates change dependencies and recompute filter.',
       'Unrelated rerender button changes separate state to test cache behavior.',
@@ -387,6 +428,14 @@ const inlineSelectA = () => setSelected('A')
 const onSelectA = useCallbackEnabled ? stableSelectA : inlineSelectA
 
 <ChildButton onSelect={onSelectA} />`,
+    exploreGoal:
+      'Understand callback identity stability and how it supports memoized child boundaries.',
+    exploreSteps: [
+      'Keep Using useCallback on, click Select A/B, then trigger unrelated parent rerenders.',
+      'Switch to Inline callbacks and trigger unrelated parent rerenders again.',
+      'Observe that behavior stays correct while callback identity strategy changes.',
+      'Use the code map to explain where stable references come from.',
+    ],
     exploreNotes: [
       'Mode toggle switches between stable callback and inline callback modes.',
       'Parent rerender button updates unrelated state to test callback identity.',
