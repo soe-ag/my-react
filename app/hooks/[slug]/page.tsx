@@ -5,9 +5,12 @@ import type { ReactNode } from 'react'
 import { ContextThemeDemo } from '@/components/learning/interactive/context-theme-demo'
 import { CallbackStabilityDemo } from '@/components/learning/interactive/callback-stability-demo'
 import { EffectDependencyDemo } from '@/components/learning/interactive/effect-dependency-demo'
+import { LayoutEffectMeasureDemo } from '@/components/learning/interactive/layout-effect-measure-demo'
 import { MemoFilterDemo } from '@/components/learning/interactive/memo-filter-demo'
+import { ReducerWorkflowDemo } from '@/components/learning/interactive/reducer-workflow-demo'
 import { RefSignalDemo } from '@/components/learning/interactive/ref-signal-demo'
 import { StateCounterDemo } from '@/components/learning/interactive/state-counter-demo'
+import { TransitionSearchDemo } from '@/components/learning/interactive/transition-search-demo'
 import { LessonShell } from '@/components/learning/lesson-shell'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -51,6 +54,9 @@ export default async function HookLessonPage({ params }: { params: Promise<{ slu
     'use-context': <ContextThemeDemo />,
     'use-memo': <MemoFilterDemo />,
     'use-callback': <CallbackStabilityDemo />,
+    'use-reducer': <ReducerWorkflowDemo />,
+    'use-layout-effect': <LayoutEffectMeasureDemo />,
+    'use-transition': <TransitionSearchDemo />,
   }
 
   return (

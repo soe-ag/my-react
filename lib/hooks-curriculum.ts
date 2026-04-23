@@ -487,6 +487,248 @@ const onSelectA = useCallbackEnabled ? stableSelectA : inlineSelectA
     ],
     availability: 'available',
   },
+  {
+    slug: 'use-reducer',
+    title: 'useReducer',
+    tagline: 'Model complex state transitions with explicit actions.',
+    track: 'core-hooks',
+    problem:
+      'As component state grows, many setState calls can become hard to reason about. useReducer centralizes transition rules so updates are predictable, testable, and easier to audit.',
+    reactTracks:
+      'React stores reducer state and dispatch function per component instance. Each dispatch queues an action, runs the reducer with current state, and rerenders with the returned next state.',
+    explainLines: [
+      'useReducer moves state transition logic into one reducer function.',
+      'dispatch(action) describes what happened; reducer decides how state changes.',
+      'Reducers should be pure: same input state/action must return same output.',
+      'useReducer shines when many fields change together from one event.',
+      'You can still derive display values during render instead of storing everything.',
+    ],
+    sampleCode: `type Action = { type: 'increment' } | { type: 'reset' }
+
+function reducer(state: number, action: Action) {
+  switch (action.type) {
+    case 'increment':
+      return state + 1
+    case 'reset':
+      return 0
+  }
+}
+
+const [count, dispatch] = useReducer(reducer, 0)`,
+    exploreCode: `dispatch({ type: 'add', amount: 5 })
+dispatch({ type: 'add', amount: 5 })
+
+// reducer controls both count and history updates
+function reducer(state, action) {
+  switch (action.type) {
+    case 'add':
+      return {
+        ...state,
+        count: state.count + action.amount,
+      }
+  }
+}`,
+    exploreGoal:
+      'Observe how one dispatch pipeline coordinates related state fields more reliably than scattered setters.',
+    exploreSteps: [
+      'Dispatch Add 1 and Add 5 actions in different orders.',
+      'Trigger Undo Last Action and compare state/history updates.',
+      'Reset the reducer state and run another action sequence.',
+      'Identify which transitions belong in reducer versus derived render logic.',
+    ],
+    exploreNotes: [
+      'Every button dispatches a typed action instead of mutating directly.',
+      'Reducer returns the full next state object in one place.',
+      'History list helps verify deterministic transition behavior.',
+      'Undo works because previous transitions are captured as actions.',
+    ],
+    commonMistake:
+      'Using reducer for trivial single-value state, or mutating state directly inside reducer.',
+    implementationGuide:
+      'Build a checkout state machine with actions like add-item, remove-item, apply-discount, and reset-cart. Keep all cart transitions inside one reducer so pricing and quantity logic stay consistent.',
+    practiceTasks: [
+      'Add a decrement action with floor-at-zero guard logic.',
+      'Add undo support for the latest dispatched action.',
+      'Extract action types into a clear discriminated union.',
+      'List one rule that must remain pure inside the reducer.',
+    ],
+    recap:
+      'useReducer is ideal when state transitions are event-driven and interconnected. It improves predictability by making action intent explicit and centralizing the next-state rules in one pure function.',
+    understandingQuestions: [
+      'When is useReducer a better fit than multiple useState calls?',
+      'Why must reducer functions stay pure?',
+      'What is the advantage of dispatching actions instead of direct setters?',
+    ],
+    understandingAnswers: [
+      'When several fields change together from shared events and transition logic gets scattered.',
+      'Purity ensures deterministic behavior, easier testing, and reliable rerender outcomes.',
+      'Actions describe intent, making transition flows easier to trace, debug, and evolve.',
+    ],
+    interviewQuestions: [
+      'How do you structure reducer state for long-lived feature modules?',
+      'What anti-patterns make reducers hard to maintain?',
+      'How would you combine useReducer with context for app-wide workflows?',
+    ],
+    interviewAnswers: [
+      'Keep state normalized by concern, and group transitions around clear domain actions.',
+      'State mutation, huge switch statements without helper functions, and unclear action naming.',
+      'Provide state/dispatch through context while keeping reducer pure and action contracts typed.',
+    ],
+    availability: 'available',
+  },
+  {
+    slug: 'use-layout-effect',
+    title: 'useLayoutEffect',
+    tagline: 'Run DOM measurements before paint to avoid visual jumps.',
+    track: 'core-hooks',
+    problem:
+      'Some UI logic depends on reading layout synchronously, such as measuring widths or positioning popovers. useEffect runs after paint and can cause visible flicker, while useLayoutEffect runs before paint.',
+    reactTracks:
+      'React runs layout effects synchronously after DOM mutations but before the browser repaints. This lets you measure and apply adjustments in the same frame.',
+    explainLines: [
+      'useLayoutEffect runs earlier than useEffect in the commit lifecycle.',
+      'Use it when you must read layout and update UI before paint.',
+      'Because it blocks paint, keep layout effects small and focused.',
+      'Most side effects should remain in useEffect for better responsiveness.',
+      'Only choose layout effect when visual correctness depends on it.',
+    ],
+    sampleCode: `useLayoutEffect(() => {
+  const width = titleRef.current?.offsetWidth ?? 0
+  setUnderlineWidth(width)
+}, [title])`,
+    exploreCode: `const runEffect = mode === 'layout' ? useLayoutEffect : useEffect
+
+runEffect(() => {
+  const next = textRef.current?.offsetWidth ?? 0
+  setIndicatorWidth(next)
+}, [text, mode])`,
+    exploreGoal:
+      'Compare visual behavior when DOM measurements are applied before paint versus after paint.',
+    exploreSteps: [
+      'Start in Layout mode and type quickly in the input.',
+      'Switch to Effect mode and repeat the same typing pattern.',
+      'Watch indicator width updates and note visual smoothness differences.',
+      'Explain why pre-paint measurement can prevent layout flash.',
+    ],
+    exploreNotes: [
+      'Both modes measure the same element width from the DOM.',
+      'Layout mode applies width before paint for a stable frame.',
+      'Effect mode applies width after paint, which may show temporary mismatch.',
+      'Use layout effects sparingly because they block paint work.',
+    ],
+    commonMistake:
+      'Using useLayoutEffect for network requests or non-layout tasks that belong in useEffect.',
+    implementationGuide:
+      'Implement a tooltip/popover that measures trigger position and updates placement before paint. This pattern is common in menus, floating panels, and caret-position overlays.',
+    practiceTasks: [
+      'Add a max indicator width clamp to avoid overflow.',
+      'Fallback to default width if element ref is missing.',
+      'Move non-layout logic out of layout effect into events/effects.',
+      'Document when your component truly requires pre-paint measurement.',
+    ],
+    recap:
+      'useLayoutEffect is a precision tool for visual correctness at paint time. Prefer useEffect by default, and use layout effect only when measuring or mutating layout before repaint prevents visible artifacts.',
+    understandingQuestions: [
+      'What timing difference matters between useEffect and useLayoutEffect?',
+      'Why can overusing useLayoutEffect harm performance?',
+      'What kinds of UI problems justify useLayoutEffect?',
+    ],
+    understandingAnswers: [
+      'useLayoutEffect runs before paint; useEffect runs after paint.',
+      'Layout effects block painting, so heavy work can delay frames and hurt responsiveness.',
+      'Pre-paint measurement/positioning scenarios like tooltips, anchors, and dynamic indicators.',
+    ],
+    interviewQuestions: [
+      'How do you decide between useEffect and useLayoutEffect in production UI?',
+      'What profiling signals indicate a layout effect bottleneck?',
+      'How would you reduce layout thrashing in measurement-heavy components?',
+    ],
+    interviewAnswers: [
+      'Default to useEffect; switch only when post-paint updates cause visible flicker or incorrect placement.',
+      'Long main-thread blocks around commit/paint and reduced frame rate during interactions.',
+      'Batch reads/writes, minimize sync work, and cache measurements when possible.',
+    ],
+    availability: 'available',
+  },
+  {
+    slug: 'use-transition',
+    title: 'useTransition',
+    tagline: 'Keep urgent interactions responsive while deferring heavy updates.',
+    track: 'core-hooks',
+    problem:
+      'Expensive updates can make typing and clicks feel laggy. useTransition marks non-urgent updates so urgent interactions stay responsive while background rendering catches up.',
+    reactTracks:
+      'React schedules transition updates at lower priority. Urgent updates render first, while transition work can be interrupted and resumed for smoother interactivity.',
+    explainLines: [
+      'useTransition separates urgent and non-urgent updates.',
+      'startTransition wraps updates that can lag slightly without hurting UX.',
+      'isPending indicates transition work is still processing.',
+      'Do not use transition for controlled input value itself.',
+      'Use transitions where computation-heavy rendering follows fast input events.',
+    ],
+    sampleCode: `const [isPending, startTransition] = useTransition()
+
+function onQueryChange(value: string) {
+  setQuery(value) // urgent
+  startTransition(() => {
+    setFiltered(expensiveFilter(items, value)) // non-urgent
+  })
+}`,
+    exploreCode: `setQuery(value)
+
+if (useTransitionMode) {
+  startTransition(() => setFilterQuery(value))
+} else {
+  setFilterQuery(value)
+}`,
+    exploreGoal:
+      'Compare typing responsiveness when heavy filtering updates are scheduled as transitions.',
+    exploreSteps: [
+      'Keep Transition mode on and type quickly in the search field.',
+      'Switch to Immediate mode and type the same sequence.',
+      'Watch pending badge and overall responsiveness differences.',
+      'Describe which updates are urgent versus deferrable in this UI.',
+    ],
+    exploreNotes: [
+      'Query state updates immediately to reflect user typing.',
+      'Filter query can be deferred as transition work.',
+      'Pending state exposes active transition processing.',
+      'Large dataset filtering amplifies scheduling differences.',
+    ],
+    commonMistake:
+      'Wrapping input value state in startTransition, which can make controlled input feel wrong.',
+    implementationGuide:
+      'Build a searchable analytics table where typing stays immediate while filtering/sorting large rows runs in a transition. This pattern is effective for admin tools and reporting pages.',
+    practiceTasks: [
+      'Add an item-count summary and keep it synced with filtered output.',
+      'Toggle between transition and immediate update strategies.',
+      'Display pending state without blocking typing interactions.',
+      'Write down one update that must remain urgent in this component.',
+    ],
+    recap:
+      'useTransition helps preserve perceived performance by prioritizing what users feel first. Keep immediate UI feedback urgent, and defer expensive render work that can complete shortly after.',
+    understandingQuestions: [
+      'What updates should remain urgent when using useTransition?',
+      'Why is isPending useful for UX feedback?',
+      'How does useTransition differ from debouncing input?',
+    ],
+    understandingAnswers: [
+      'Direct interaction feedback like controlled input value and critical button state.',
+      'It lets you communicate background rendering without freezing urgent interactions.',
+      'Transition changes scheduling priority; debounce delays updates by time.',
+    ],
+    interviewQuestions: [
+      'When would you choose useTransition over manual throttling/debouncing?',
+      'How do you identify transition candidates in an existing app?',
+      'What pitfalls appear when everything is wrapped in startTransition?',
+    ],
+    interviewAnswers: [
+      'When heavy UI rendering is the bottleneck and urgent interactions must remain immediate.',
+      'Profile interactions and mark expensive non-blocking updates after user input as candidates.',
+      'Critical updates may feel delayed, causing confusing UX and state lag where immediacy is required.',
+    ],
+    availability: 'available',
+  },
 ]
 
 export function getHookLesson(slug: string) {
