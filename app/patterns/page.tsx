@@ -1,12 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from 'next/link'
 
-const plannedPatterns = [
-  'Controlled forms and validation boundaries',
-  'Lifting and colocating state intentionally',
-  'Context architecture and provider composition',
-  'Custom hooks for reusable behavior',
-  'Render behavior and performance profiling',
-]
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { reactPatternLessons } from '@/lib/react-patterns-curriculum'
+import { cn } from '@/lib/utils'
 
 export default function PatternsPage() {
   return (
@@ -21,26 +18,43 @@ export default function PatternsPage() {
         </p>
       </header>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Planned learning modules</CardTitle>
-          <CardDescription>
-            These patterns will be implemented after the core-hook phase is complete.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="grid gap-2 rounded-xl bg-[linear-gradient(180deg,oklch(0.99_0.008_84/.88),oklch(0.975_0.014_210/.62))] p-3 text-sm text-muted-foreground">
-            {plannedPatterns.map((pattern) => (
-              <li
-                key={pattern}
-                className="rounded-lg bg-background/90 px-3 py-2.5 shadow-[inset_0_0_0_1px_oklch(0.76_0.018_230/.42)]"
-              >
-                {pattern}
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 md:grid-cols-2">
+        {reactPatternLessons.map((lesson) => {
+          const isReady = lesson.availability === 'available'
+
+          return (
+            <Card
+              key={lesson.slug}
+              className={cn(
+                'group/lesson relative overflow-hidden',
+                isReady &&
+                  'clickable-card border-primary/25 shadow-[0_8px_24px_oklch(0.42_0.09_210/0.1)]'
+              )}
+            >
+              {isReady ? (
+                <Link
+                  href={`/patterns/${lesson.slug}`}
+                  className="absolute inset-0 z-10 rounded-xl"
+                  aria-label={`Open ${lesson.title} pattern lesson`}
+                  tabIndex={-1}
+                />
+              ) : null}
+              <CardHeader>
+                <div className="flex items-center justify-between gap-2">
+                  <CardTitle>{lesson.title}</CardTitle>
+                  <Badge variant={isReady ? 'default' : 'outline'}>
+                    {isReady ? 'Ready' : 'Soon'}
+                  </Badge>
+                </div>
+                <CardDescription>{lesson.tagline}</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                <p>{lesson.problem}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
     </div>
   )
 }
