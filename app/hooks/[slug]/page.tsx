@@ -4,7 +4,9 @@ import type { ReactNode } from 'react'
 
 import { ContextThemeDemo } from '@/components/learning/interactive/context-theme-demo'
 import { CallbackStabilityDemo } from '@/components/learning/interactive/callback-stability-demo'
+import { DeferredValueSearchDemo } from '@/components/learning/interactive/deferred-value-search-demo'
 import { EffectDependencyDemo } from '@/components/learning/interactive/effect-dependency-demo'
+import { IdAccessibilityDemo } from '@/components/learning/interactive/id-accessibility-demo'
 import { LayoutEffectMeasureDemo } from '@/components/learning/interactive/layout-effect-measure-demo'
 import { MemoFilterDemo } from '@/components/learning/interactive/memo-filter-demo'
 import { ReducerWorkflowDemo } from '@/components/learning/interactive/reducer-workflow-demo'
@@ -57,6 +59,8 @@ export default async function HookLessonPage({ params }: { params: Promise<{ slu
     'use-reducer': <ReducerWorkflowDemo />,
     'use-layout-effect': <LayoutEffectMeasureDemo />,
     'use-transition': <TransitionSearchDemo />,
+    'use-deferred-value': <DeferredValueSearchDemo />,
+    'use-id': <IdAccessibilityDemo />,
   }
 
   return (

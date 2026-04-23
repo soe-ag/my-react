@@ -729,6 +729,168 @@ if (useTransitionMode) {
     ],
     availability: 'available',
   },
+  {
+    slug: 'use-deferred-value',
+    title: 'useDeferredValue',
+    tagline: 'Keep fast input updates while expensive UI lags safely behind.',
+    track: 'core-hooks',
+    problem:
+      'Sometimes you want typed input to stay instant while heavy rendering catches up a little later. useDeferredValue lets rendering that depends on a value trail behind urgent input updates.',
+    reactTracks:
+      'React keeps a deferred version of a value at lower priority. Urgent renders see the latest value immediately, while expensive subtrees can render from the deferred value when time allows.',
+    explainLines: [
+      'useDeferredValue returns a lagging version of a changing value.',
+      'Use the original value for urgent UI like controlled inputs.',
+      'Use the deferred value for expensive filtering/rendering work.',
+      'Lag is scheduling-based, not a fixed timer delay.',
+      'It complements transitions when you pass a value downstream.',
+    ],
+    sampleCode: `const [query, setQuery] = useState('')
+const deferredQuery = useDeferredValue(query)
+
+const visible = useMemo(() => {
+  return expensiveFilter(items, deferredQuery)
+}, [deferredQuery])`,
+    exploreCode: `setQuery(value) // urgent input update
+const deferredQuery = useDeferredValue(query)
+
+const results = useMemo(
+  () => expensiveFilter(items, deferredQuery),
+  [deferredQuery]
+)`,
+    exploreGoal:
+      'Observe how typing remains immediate while expensive result rendering follows deferred value updates.',
+    exploreSteps: [
+      'Type quickly into the input and watch immediate query text.',
+      'Compare immediate query and deferred query values.',
+      'Observe result list updates while deferred query catches up.',
+      'Identify which parts of UI should stay urgent versus deferred.',
+    ],
+    exploreNotes: [
+      'Input field always reflects the latest query immediately.',
+      'Deferred query may trail behind during heavy computation.',
+      'Filtering work subscribes to deferred query, not urgent query.',
+      'Deferred lag is intentional to preserve interaction responsiveness.',
+    ],
+    commonMistake:
+      'Replacing urgent interaction state with deferred state everywhere, causing confusing UI lag.',
+    implementationGuide:
+      'Build a large searchable table where the textbox updates instantly, but expensive row filtering and chart previews use deferred query values. This pattern keeps admin tools responsive under large datasets.',
+    practiceTasks: [
+      'Add a badge that indicates when deferred value is behind the input value.',
+      'Move expensive list computation to depend only on deferred query.',
+      'Keep validation and input echo on urgent query state.',
+      'Write one rule for choosing deferred versus urgent consumers.',
+    ],
+    recap:
+      'useDeferredValue protects interaction responsiveness by allowing heavy render paths to lag behind urgent updates. Keep immediate user feedback tied to the source value, and attach expensive rendering to the deferred value.',
+    understandingQuestions: [
+      'How is useDeferredValue different from debouncing?',
+      'Which UI parts should consume deferred values?',
+      'Why should controlled input value not use deferred state?',
+    ],
+    understandingAnswers: [
+      'Deferred value changes by rendering priority, not a fixed time delay like debounce.',
+      'Expensive computations and large rendering subtrees are best deferred consumers.',
+      'Input echo must remain immediate; deferring it can make typing feel broken.',
+    ],
+    interviewQuestions: [
+      'When would you choose useDeferredValue over useTransition?',
+      'How can you expose deferred lag state in UX safely?',
+      'What profiling signs suggest deferred value could help?',
+    ],
+    interviewAnswers: [
+      'Use deferred value when a child subtree depends on a changing value and can lag.',
+      'Compare source and deferred values to show a subtle pending indicator only when lag exists.',
+      'Typing/input events stay fast, but expensive render work causes frame drops in dependent UI.',
+    ],
+    availability: 'available',
+  },
+  {
+    slug: 'use-id',
+    title: 'useId',
+    tagline: 'Generate stable, unique IDs for accessible UI wiring.',
+    track: 'core-hooks',
+    problem:
+      'Reusable form components need unique IDs for labels, hints, and error messages without collisions. useId provides stable IDs that work safely with server rendering and hydration.',
+    reactTracks:
+      'React generates deterministic IDs scoped to the component tree, so server and client markup stay consistent across hydration while keeping IDs unique per rendered instance.',
+    explainLines: [
+      'useId generates unique IDs for accessibility relationships.',
+      'It is ideal for label htmlFor and aria-describedby wiring.',
+      'IDs remain stable for a component instance across rerenders.',
+      'Do not use useId as list keys; keys come from your data.',
+      'Reusable components become safer because each instance gets unique IDs.',
+    ],
+    sampleCode: `const inputId = useId()
+const hintId = useId()
+
+return (
+  <>
+    <label htmlFor={inputId}>Email</label>
+    <input id={inputId} aria-describedby={hintId} />
+    <p id={hintId}>We will never share your email.</p>
+  </>
+)`,
+    exploreCode: `function Field({ label }: { label: string }) {
+  const id = useId()
+  const hintId = \`\${id}-hint\`
+
+  return (
+    <>
+      <label htmlFor={id}>{label}</label>
+      <input id={id} aria-describedby={hintId} />
+      <p id={hintId}>Helper text</p>
+    </>
+  )
+}`,
+    exploreGoal:
+      'Verify that repeated field components get unique, stable IDs while preserving accessibility links.',
+    exploreSteps: [
+      'Render multiple field instances generated from one reusable component.',
+      'Inspect displayed IDs and confirm each instance is unique.',
+      'Focus labels and verify they target the correct input.',
+      'Explain why this remains safe in SSR and hydration contexts.',
+    ],
+    exploreNotes: [
+      'Each field instance receives a unique base ID from useId.',
+      'Derived IDs can connect hints/errors via aria-describedby.',
+      'Label click should always focus the matching input.',
+      'useId IDs are deterministic for server-client consistency.',
+    ],
+    commonMistake: 'Using array index or random values for accessibility IDs in reusable forms.',
+    implementationGuide:
+      'Create a shared FormField component used across signup, profile, and settings pages. Generate input/hint/error IDs with useId so every instance remains accessible and collision-free.',
+    practiceTasks: [
+      'Add error text element with aria-describedby chaining.',
+      'Render two copies of the same field component and compare IDs.',
+      'Document why list keys and useId serve different purposes.',
+      'Add one checkbox and wire label association with useId.',
+    ],
+    recap:
+      'useId is an accessibility and SSR consistency tool for unique element relationships. It prevents ID collisions in reusable components while keeping label and ARIA wiring robust.',
+    understandingQuestions: [
+      'Why is useId preferred over random IDs in SSR apps?',
+      'What relationships are commonly wired with useId?',
+      'Why should useId not be used as React list keys?',
+    ],
+    understandingAnswers: [
+      'useId is deterministic across server and client renders, avoiding hydration mismatch risk.',
+      'htmlFor/id and ARIA links like aria-describedby and aria-labelledby.',
+      'Keys identify data identity for reconciliation; useId identifies DOM element relationships.',
+    ],
+    interviewQuestions: [
+      'How do you build accessible reusable field components at scale?',
+      'What SSR pitfalls does useId help prevent?',
+      'How would you combine useId with form libraries?',
+    ],
+    interviewAnswers: [
+      'Standardize field primitives that generate IDs and connect label/hint/error semantics automatically.',
+      'It avoids server-client ID divergence and cross-instance collisions during hydration.',
+      'Use useId for DOM accessibility wiring while libraries manage value/validation state.',
+    ],
+    availability: 'available',
+  },
 ]
 
 export function getHookLesson(slug: string) {
