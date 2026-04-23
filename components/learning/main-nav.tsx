@@ -43,6 +43,9 @@ export function MainNav({ totalLessons, lessons }: MainNavProps) {
         <Link href="/hooks" className={navLinkClass}>
           Curriculum
         </Link>
+        <Link href="/quiz" className={navLinkClass}>
+          JS Quiz
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
