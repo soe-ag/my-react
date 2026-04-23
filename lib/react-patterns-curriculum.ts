@@ -86,22 +86,46 @@ export const reactPatternLessons: ReactPatternLesson[] = [
     title: 'Custom Hooks for Reusable Behavior',
     tagline: 'Extract behavior without leaking implementation detail.',
     problem:
-      'Reusable behavior can become hard to evolve when hooks expose unstable or oversized APIs.',
-    explainLines: [],
-    exploreSteps: [],
-    recap: '',
-    availability: 'coming-soon',
+      'Hooks are easy to extract, but difficult to maintain when they expose too much internal state or unstable callback contracts. Good hook design hides implementation details and offers focused, predictable APIs.',
+    explainLines: [
+      'Extract hooks when behavior repeats across multiple components.',
+      'Return the smallest API needed: data, actions, and status metadata.',
+      'Keep internal implementation private so callers depend on stable contracts.',
+      'Avoid returning volatile objects/functions unless stability is intentional.',
+      'Design hooks around use cases, not around raw internal state dumps.',
+    ],
+    exploreSteps: [
+      'Switch to Inline logic mode and observe duplicated behavior across cards.',
+      'Switch to Custom hook mode and compare API simplicity.',
+      'Trigger the same actions in both cards and confirm equivalent behavior.',
+      'Describe which responsibilities belong inside the hook versus component UI.',
+    ],
+    recap:
+      'Custom hooks should encapsulate reusable behavior behind clear, stable contracts. Keep the API narrow, preserve implementation freedom, and optimize for readability and long-term evolution.',
+    availability: 'available',
   },
   {
     slug: 'render-profiling',
     title: 'Render Behavior and Performance Profiling',
     tagline: 'Measure first, optimize second.',
     problem:
-      'Performance work is often misdirected without profiling actual interaction bottlenecks.',
-    explainLines: [],
-    exploreSteps: [],
-    recap: '',
-    availability: 'coming-soon',
+      'Performance tuning often starts with guesses that add complexity without real benefit. Profiling helps identify expensive interactions first so optimizations target true bottlenecks.',
+    explainLines: [
+      'Profile interactions before adding memoization or architectural changes.',
+      'Measure commit duration and render count for real user actions.',
+      'Identify expensive subtrees, then optimize only those paths.',
+      'Compare before/after metrics to validate optimization impact.',
+      'Prefer simpler code when measured gains are negligible.',
+    ],
+    exploreSteps: [
+      'Run in Unoptimized mode and trigger several parent rerenders.',
+      'Watch profiler logs and render counts for expensive list components.',
+      'Switch to Optimized mode and repeat the same interactions.',
+      'Compare metrics and explain which optimization produced real gains.',
+    ],
+    recap:
+      'Profiling turns performance work into evidence-driven decisions. Measure first, optimize targeted bottlenecks, and keep improvements only when they produce meaningful interaction gains.',
+    availability: 'available',
   },
 ]
 

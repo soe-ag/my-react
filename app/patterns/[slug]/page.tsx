@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 
 import { ContextCompositionDemo } from '@/components/learning/interactive/context-composition-demo'
 import { ControlledFormsBoundaryDemo } from '@/components/learning/interactive/controlled-forms-boundary-demo'
+import { CustomHookDesignDemo } from '@/components/learning/interactive/custom-hook-design-demo'
+import { RenderProfilingDemo } from '@/components/learning/interactive/render-profiling-demo'
 import { StateColocationDemo } from '@/components/learning/interactive/state-colocation-demo'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -45,6 +47,8 @@ export default async function PatternLessonPage({ params }: { params: Promise<{ 
     'state-colocation': <StateColocationDemo />,
     'controlled-forms': <ControlledFormsBoundaryDemo />,
     'context-composition': <ContextCompositionDemo />,
+    'custom-hook-design': <CustomHookDesignDemo />,
+    'render-profiling': <RenderProfilingDemo />,
   }
 
   return (
