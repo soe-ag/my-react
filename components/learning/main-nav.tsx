@@ -17,7 +17,13 @@ import { useLearningProgress } from '@/components/learning/progress-provider'
 
 type MainNavProps = {
   totalLessons: number
-  lessons: Array<{ slug: string; title: string; availability: 'available' | 'coming-soon' }>
+  lessons: Array<{
+    slug: string
+    title: string
+    availability: 'available' | 'coming-soon'
+    track: 'hooks' | 'patterns'
+    href: string
+  }>
 }
 
 export function MainNav({ totalLessons, lessons }: MainNavProps) {
@@ -50,33 +56,53 @@ export function MainNav({ totalLessons, lessons }: MainNavProps) {
           <DropdownMenuContent align="start" className="w-72">
             <DropdownMenuLabel>Jump To Lesson</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {lessons.map((lesson) => {
-              const href = `/hooks/${lesson.slug}`
-              const isActive = pathname === href
+            <DropdownMenuLabel className="text-xs text-muted-foreground">Hooks</DropdownMenuLabel>
+            {lessons
+              .filter((lesson) => lesson.track === 'hooks')
+              .map((lesson) => {
+                const isActive = pathname === lesson.href
 
-              return (
-                <DropdownMenuItem
-                  key={lesson.slug}
-                  asChild
-                  className={isActive ? 'bg-accent/35 font-medium text-foreground' : undefined}
-                >
-                  <Link href={href}>
-                    <span>{lesson.title}</span>
-                    {lesson.availability === 'coming-soon' ? (
-                      <span className="ml-auto text-xs text-muted-foreground">Soon</span>
-                    ) : null}
-                  </Link>
-                </DropdownMenuItem>
-              )
-            })}
+                return (
+                  <DropdownMenuItem
+                    key={lesson.slug}
+                    asChild
+                    className={isActive ? 'bg-accent/35 font-medium text-foreground' : undefined}
+                  >
+                    <Link href={lesson.href}>
+                      <span>{lesson.title}</span>
+                      {lesson.availability === 'coming-soon' ? (
+                        <span className="ml-auto text-xs text-muted-foreground">Soon</span>
+                      ) : null}
+                    </Link>
+                  </DropdownMenuItem>
+                )
+              })}
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Patterns
+            </DropdownMenuLabel>
+            {lessons
+              .filter((lesson) => lesson.track === 'patterns')
+              .map((lesson) => {
+                const isActive = pathname === lesson.href
+
+                return (
+                  <DropdownMenuItem
+                    key={lesson.slug}
+                    asChild
+                    className={isActive ? 'bg-accent/35 font-medium text-foreground' : undefined}
+                  >
+                    <Link href={lesson.href}>
+                      <span>{lesson.title}</span>
+                      {lesson.availability === 'coming-soon' ? (
+                        <span className="ml-auto text-xs text-muted-foreground">Soon</span>
+                      ) : null}
+                    </Link>
+                  </DropdownMenuItem>
+                )
+              })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Link href="/patterns" className={navLinkClass}>
-          Patterns
-        </Link>
-        <Link href="/hooks/use-state" className={navLinkClass}>
-          First Lesson
-        </Link>
         <span className="hidden rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs text-primary sm:inline-flex">
           {hydrated ? `${completedCount}/${totalLessons} complete` : 'Loading progress...'}
         </span>

@@ -5,6 +5,7 @@ import { MainNav } from '@/components/learning/main-nav'
 import { LearningProgressProvider } from '@/components/learning/progress-provider'
 import { cn } from '@/lib/utils'
 import { hookLessons } from '@/lib/hooks-curriculum'
+import { reactPatternLessons } from '@/lib/react-patterns-curriculum'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -29,11 +30,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const trackedLessons = hookLessons.map((lesson) => lesson.slug)
-  const lessonNavItems = hookLessons.map((lesson) => ({
-    slug: lesson.slug,
-    title: lesson.title,
-    availability: lesson.availability,
-  }))
+  const lessonNavItems = [
+    ...hookLessons.map((lesson) => ({
+      slug: lesson.slug,
+      title: lesson.title,
+      availability: lesson.availability,
+      track: 'hooks' as const,
+      href: `/hooks/${lesson.slug}`,
+    })),
+    ...reactPatternLessons.map((lesson) => ({
+      slug: lesson.slug,
+      title: lesson.title,
+      availability: lesson.availability,
+      track: 'patterns' as const,
+      href: `/patterns/${lesson.slug}`,
+    })),
+  ]
 
   return (
     <html
