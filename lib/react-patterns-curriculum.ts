@@ -40,22 +40,46 @@ export const reactPatternLessons: ReactPatternLesson[] = [
     title: 'Controlled Forms and Validation Boundaries',
     tagline: 'Model form control ownership and validation flow clearly.',
     problem:
-      'Complex forms need clear ownership between field state, validation, and submission effects.',
-    explainLines: [],
-    exploreSteps: [],
-    recap: '',
-    availability: 'coming-soon',
+      'Large forms often become hard to maintain when validation and state updates are scattered. Defining validation boundaries keeps instant field feedback separate from cross-field rules and submit-time checks.',
+    explainLines: [
+      'Controlled inputs keep form values in React state for predictable behavior.',
+      'Field-level validation should run on local changes for immediate feedback.',
+      'Cross-field validation belongs at a broader boundary (for example submit or blur).',
+      'Separate error ownership: local errors versus form-level errors.',
+      'Clear validation boundaries reduce noisy rerenders and improve maintainability.',
+    ],
+    exploreSteps: [
+      'Type an invalid email and short password to trigger field-level errors.',
+      'Toggle strict submit validation and try to submit again.',
+      'Fix one field and observe only related validation messages clear.',
+      'Explain which checks should happen per keystroke versus on submit.',
+    ],
+    recap:
+      'Controlled forms are most effective when validation responsibilities are intentional. Keep fast local validation near fields, reserve expensive or cross-field rules for broader boundaries, and keep error ownership explicit.',
+    availability: 'available',
   },
   {
     slug: 'context-composition',
     title: 'Context Architecture and Provider Composition',
     tagline: 'Scale provider trees without over-rendering.',
     problem:
-      'Provider sprawl can increase rerenders unless context boundaries are designed intentionally.',
-    explainLines: [],
-    exploreSteps: [],
-    recap: '',
-    availability: 'coming-soon',
+      'Single giant context values can force unrelated consumers to rerender. Provider composition and context splitting help isolate updates and keep component trees scalable.',
+    explainLines: [
+      'Compose providers by concern rather than one global provider blob.',
+      'Split frequently changing values into separate contexts when consumers differ.',
+      'Keep provider value identity stable to avoid accidental rerender cascades.',
+      'Expose narrow context contracts focused on state and actions needed by consumers.',
+      'Use composition to keep context boundaries explicit and testable.',
+    ],
+    exploreSteps: [
+      'Start in combined context mode and toggle theme only.',
+      'Observe both theme and locale consumers rerender together.',
+      'Switch to composed providers mode and toggle theme again.',
+      'Confirm only the relevant consumer rerenders and summarize why.',
+    ],
+    recap:
+      'Context composition is about update isolation and clear ownership. Split providers by concern, stabilize values, and keep contracts narrow so consumers rerender only when their data actually changes.',
+    availability: 'available',
   },
   {
     slug: 'custom-hook-design',

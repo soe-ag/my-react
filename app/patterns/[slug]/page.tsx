@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { ReactNode } from 'react'
 
+import { ContextCompositionDemo } from '@/components/learning/interactive/context-composition-demo'
+import { ControlledFormsBoundaryDemo } from '@/components/learning/interactive/controlled-forms-boundary-demo'
 import { StateColocationDemo } from '@/components/learning/interactive/state-colocation-demo'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,6 +39,12 @@ export default async function PatternLessonPage({ params }: { params: Promise<{ 
         </Card>
       </div>
     )
+  }
+
+  const interactiveBySlug: Record<string, ReactNode> = {
+    'state-colocation': <StateColocationDemo />,
+    'controlled-forms': <ControlledFormsBoundaryDemo />,
+    'context-composition': <ContextCompositionDemo />,
   }
 
   return (
@@ -97,7 +106,14 @@ export default async function PatternLessonPage({ params }: { params: Promise<{ 
         </Card>
       </div>
 
-      <StateColocationDemo />
+      {interactiveBySlug[slug] ?? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Interactive panel not found</CardTitle>
+          </CardHeader>
+          <CardContent>This pattern lesson does not have a live demo yet.</CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
