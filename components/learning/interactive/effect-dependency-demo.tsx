@@ -94,9 +94,12 @@ export function EffectDependencyDemo() {
               Interact with controls to observe the effect lifecycle.
             </p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="grid gap-2 rounded-xl bg-[linear-gradient(180deg,oklch(0.99_0.008_84/.88),oklch(0.975_0.014_210/.62))] p-3">
               {logs.map((log) => (
-                <li key={log.id} className="rounded-md border px-3 py-2 text-sm">
+                <li
+                  key={log.id}
+                  className="rounded-lg bg-background/90 px-3 py-2.5 text-sm shadow-[inset_0_0_0_1px_oklch(0.76_0.018_230/.42)]"
+                >
                   {log.text}
                 </li>
               ))}

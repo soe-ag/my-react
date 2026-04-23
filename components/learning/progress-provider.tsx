@@ -34,28 +34,31 @@ type LearningProgressProviderProps = {
 }
 
 export function LearningProgressProvider({ lessonSlugs, children }: LearningProgressProviderProps) {
-  const [progress, setProgress] = useState<LearningProgressState>(() => {
-    if (typeof window === 'undefined') {
-      return defaultLearningProgress
-    }
+  const [progress, setProgress] = useState<LearningProgressState>(defaultLearningProgress)
+  const [hydrated, setHydrated] = useState(false)
 
+  useEffect(() => {
     try {
       const raw = window.localStorage.getItem(LEARNING_PROGRESS_KEY)
       if (!raw) {
-        return defaultLearningProgress
+        setProgress(defaultLearningProgress)
+      } else {
+        const parsed = JSON.parse(raw)
+        setProgress(sanitizeLearningProgress(parsed, lessonSlugs))
       }
-      const parsed = JSON.parse(raw)
-      return sanitizeLearningProgress(parsed, lessonSlugs)
     } catch {
-      return defaultLearningProgress
+      setProgress(defaultLearningProgress)
+    } finally {
+      setHydrated(true)
     }
-  })
-
-  const hydrated = true
+  }, [lessonSlugs])
 
   useEffect(() => {
+    if (!hydrated) {
+      return
+    }
     window.localStorage.setItem(LEARNING_PROGRESS_KEY, JSON.stringify(progress))
-  }, [progress])
+  }, [progress, hydrated])
 
   const isCompleted = useCallback(
     (slug: string) => progress.completedLessonSlugs.includes(slug),

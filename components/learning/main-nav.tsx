@@ -1,16 +1,28 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useLearningProgress } from '@/components/learning/progress-provider'
 
 type MainNavProps = {
   totalLessons: number
+  lessons: Array<{ slug: string; title: string; availability: 'available' | 'coming-soon' }>
 }
 
-export function MainNav({ totalLessons }: MainNavProps) {
+export function MainNav({ totalLessons, lessons }: MainNavProps) {
   const { hydrated, progress, resetProgress } = useLearningProgress()
+  const pathname = usePathname()
   const completedCount = progress.completedLessonSlugs.length
 
   const navLinkClass =
@@ -25,6 +37,40 @@ export function MainNav({ totalLessons }: MainNavProps) {
         <Link href="/hooks" className={navLinkClass}>
           Curriculum
         </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 transition-colors hover:bg-accent/50 hover:text-foreground"
+            >
+              Lessons
+              <ChevronDown className="h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-72">
+            <DropdownMenuLabel>Jump To Lesson</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {lessons.map((lesson) => {
+              const href = `/hooks/${lesson.slug}`
+              const isActive = pathname === href
+
+              return (
+                <DropdownMenuItem
+                  key={lesson.slug}
+                  asChild
+                  className={isActive ? 'bg-accent/35 font-medium text-foreground' : undefined}
+                >
+                  <Link href={href}>
+                    <span>{lesson.title}</span>
+                    {lesson.availability === 'coming-soon' ? (
+                      <span className="ml-auto text-xs text-muted-foreground">Soon</span>
+                    ) : null}
+                  </Link>
+                </DropdownMenuItem>
+              )
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Link href="/patterns" className={navLinkClass}>
           Patterns
         </Link>

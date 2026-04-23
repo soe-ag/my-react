@@ -34,7 +34,7 @@ export default async function HookLessonPage({ params }: { params: Promise<{ slu
             <CardDescription>This hook is in the roadmap but not interactive yet.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-muted-foreground">
-            <p>{lesson.guidedChallenge}</p>
+            <p>{lesson.implementationGuide}</p>
             <Button asChild variant="outline">
               <Link href="/hooks">Back to all hook lessons</Link>
             </Button>

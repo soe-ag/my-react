@@ -29,10 +29,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const trackedLessons = hookLessons.map((lesson) => lesson.slug)
+  const lessonNavItems = hookLessons.map((lesson) => ({
+    slug: lesson.slug,
+    title: lesson.title,
+    availability: lesson.availability,
+  }))
 
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         'h-full',
         'antialiased',
@@ -42,10 +48,10 @@ export default function RootLayout({
         inter.variable
       )}
     >
-      <body className="min-h-full flex flex-col">
+      <body suppressHydrationWarning className="min-h-full flex flex-col">
         <LearningProgressProvider lessonSlugs={trackedLessons}>
           <header className="sticky top-0 z-20 border-b border-white/20 bg-background/75 shadow-[0_8px_30px_oklch(0.42_0.08_220/0.12)] backdrop-blur-xl">
-            <MainNav totalLessons={trackedLessons.length} />
+            <MainNav totalLessons={trackedLessons.length} lessons={lessonNavItems} />
           </header>
           {children}
         </LearningProgressProvider>

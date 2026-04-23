@@ -14,7 +14,7 @@ export type HookLesson = {
   exploreSteps: string[]
   exploreNotes: string[]
   commonMistake: string
-  guidedChallenge: string
+  implementationGuide: string
   practiceTasks: string[]
   recap: string
   understandingQuestions: string[]
@@ -31,9 +31,9 @@ export const hookLessons: HookLesson[] = [
     tagline: 'Model changing UI from tiny state transitions.',
     track: 'core-hooks',
     problem:
-      'You need the UI to react to user input, but plain variables are not preserved between renders.',
+      'You need the UI to react to user input and previous interaction history, but plain local variables reset on every render. useState gives each component instance reliable memory so button clicks, typing, and toggles always map to predictable UI changes.',
     reactTracks:
-      'React stores the current state value per component instance and queues updates for rerenders.',
+      'React stores state per component instance, then queues updates and processes them before the next render. During that next render, your component receives the latest value so the screen and state stay aligned.',
     explainLines: [
       'useState is how a component remembers values.',
       'When you call setState, React draws the UI again with the new value.',
@@ -74,8 +74,8 @@ function incrementFunctional() {
     ],
     commonMistake:
       'Updating state from stale values. Prefer functional updates when next state depends on previous state.',
-    guidedChallenge:
-      'Build a counter where step size can change, then explain why functional updates avoid stale increments.',
+    implementationGuide:
+      'Build a quantity selector like a shopping cart stepper: expose + and - controls, keep the current quantity in state, and use functional updates when quantity depends on its previous value. This is the same pattern used in scoreboards, pagination, and quantity pickers.',
     practiceTasks: [
       'Implement increment and decrement with a dynamic step control.',
       'Add a hard limit where count cannot go below zero.',
@@ -83,7 +83,7 @@ function incrementFunctional() {
       'Write one sentence explaining stale closure in your own words.',
     ],
     recap:
-      'State is the memory of your component; rerenders are the projection of that memory into UI.',
+      'State is the memory of your component, and rerenders are how that memory is projected into the UI. Keep state minimal, prefer derived values in render, and use functional updates whenever the next value depends on the previous one. That combination prevents stale closure bugs and keeps transitions predictable.',
     understandingQuestions: [
       'When does React read the updated state value in relation to rerender?',
       'Why can two setCount calls in one event still produce one render?',
@@ -112,9 +112,9 @@ function incrementFunctional() {
     tagline: 'Synchronize your component with systems outside render.',
     track: 'core-hooks',
     problem:
-      'Some work should happen after paint or when dependencies change, such as subscriptions or network sync.',
+      'Some work should happen after paint or when specific values change, such as timers, subscriptions, requests, and external APIs. Render should stay pure, while effect handles synchronization with systems that live outside React rendering.',
     reactTracks:
-      'React runs effects after commit and compares dependency values to decide whether to rerun.',
+      'React commits UI first, then runs effects. On later renders, React compares dependencies and reruns only when one changed, running cleanup first so old work is stopped before new work starts.',
     explainLines: [
       'useEffect is for work that happens outside normal rendering.',
       'It runs after React has painted the UI.',
@@ -154,15 +154,16 @@ function incrementFunctional() {
     ],
     commonMistake:
       'Using effects for derived data that could be computed during render, or leaving dependencies incomplete.',
-    guidedChallenge:
-      'Connect an input to a simulated request with cleanup. Observe how dependency changes trigger cleanup and rerun.',
+    implementationGuide:
+      'Implement a live-search panel: trigger a debounced request when the query changes, cancel the previous timer or request in cleanup, and show only the latest result. This same effect pattern is used in auto-save, polling, and subscription lifecycle management.',
     practiceTasks: [
       'Create a fetch-like effect using setTimeout and dependency-driven query.',
       'Add cancellation logic in cleanup so old requests do not win race conditions.',
       'Move one non-side-effect expression out of effect into render.',
       'List every dependency and explain why it belongs in the array.',
     ],
-    recap: 'Effects are for synchronization, not for replacing core render logic.',
+    recap:
+      'Effects are for synchronization, not for deriving UI state that could be computed during render. Think in lifecycle order: render -> commit -> effect -> cleanup -> rerun. If you keep dependencies complete and cleanup correct, your component avoids stale data, race conditions, and memory leaks.',
     understandingQuestions: [
       'Why does cleanup run before the next effect execution?',
       'What bugs appear when dependency arrays are incomplete?',
@@ -190,9 +191,10 @@ function incrementFunctional() {
     title: 'useRef',
     tagline: 'Keep mutable values without rerendering.',
     track: 'core-hooks',
-    problem: 'You need persistent data or element references that should not trigger rerenders.',
+    problem:
+      'You need persistent data or element handles across renders, but updating them should not cause a visual rerender. useRef is ideal for storing DOM references, timer IDs, and transient counters that support behavior rather than display.',
     reactTracks:
-      'React keeps a stable ref object across renders and updates only the .current field.',
+      'React creates one stable ref object per component instance. Across rerenders the object identity stays the same, and only .current changes, which is why ref updates do not trigger rendering.',
     explainLines: [
       'useRef keeps a mutable value that survives renders.',
       'The ref object itself stays the same between renders.',
@@ -232,14 +234,16 @@ function syncRefToUi() {
       'This demonstrates mutable storage versus reactive state updates.',
     ],
     commonMistake: 'Treating ref changes like state and expecting UI updates automatically.',
-    guidedChallenge: 'Track render count in a ref and compare with state-driven updates.',
+    implementationGuide:
+      'Create a form helper that focuses the first invalid field: store element references with useRef, update validation state with useState, and call ref.current.focus() when submit fails. This mirrors real-world focus management, scroll restoration, and imperative bridge logic.',
     practiceTasks: [
       'Add a previous value tracker using a ref and show it on sync.',
       'Implement a focus-on-error interaction with an input ref.',
       'Track timer id in ref and clear it in cleanup safely.',
       'Explain one case where ref is better than state and one where it is not.',
     ],
-    recap: 'Refs hold mutable instance values that live outside render output.',
+    recap:
+      'Refs hold mutable instance values outside render output. Use them when you need persistence without rerender, and copy ref values into state only when the UI must reflect the change. A good rule: visual truth belongs in state, imperative handles belong in refs.',
     understandingQuestions: [
       'Why does changing ref.current not rerender the component?',
       'What kinds of bugs happen when refs replace actual reactive state?',
@@ -267,9 +271,10 @@ function syncRefToUi() {
     title: 'useContext',
     tagline: 'Share values across trees without prop drilling.',
     track: 'core-hooks',
-    problem: 'Multiple nested components need the same value or actions.',
+    problem:
+      'Multiple nested components need the same values or actions, and passing props through every layer creates noise and fragile coupling. Context lets you publish a value once and consume it where needed deeper in the tree.',
     reactTracks:
-      'React subscribes consumers to provider values and rerenders consumers when the provided value changes.',
+      'React subscribes each consumer to its nearest provider value. When provider value identity changes, React rerenders consumers that read that context, so provider stability directly affects rendering cost.',
     explainLines: [
       'Context lets many nested components read shared values easily.',
       'A Provider gives that value to all child consumers.',
@@ -304,15 +309,16 @@ return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>`,
       'Changing provider state triggers consumer rerenders with new value.',
     ],
     commonMistake: 'Putting unstable objects/functions in context values without memoization.',
-    guidedChallenge:
-      'Create a theme provider and measure which components rerender when the value changes.',
+    implementationGuide:
+      'Implement an app preferences provider for theme, language, and text scale. Expose both values and actions through context, then memoize provider values so consumers rerender only when relevant state changes. This pattern maps directly to auth, feature flags, and global settings.',
     practiceTasks: [
       'Add a third consumer and verify it updates from the same provider.',
       'Split context into state and actions contexts to compare rerenders.',
       'Memoize provider value and describe the rerender impact.',
       'Document where context should stop and local state should begin.',
     ],
-    recap: 'Context is dependency injection for component trees, not global state by default.',
+    recap:
+      'Context is dependency injection for component trees, not a replacement for all state management. Keep provider boundaries intentional, stabilize value identity, and split contexts when consumers need different slices. That keeps shared state ergonomic without creating broad rerender cascades.',
     understandingQuestions: [
       'Why can unstable provider values cause excess rerenders?',
       'How does context compare with passing props explicitly?',
@@ -340,8 +346,10 @@ return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>`,
     title: 'useMemo',
     tagline: 'Cache expensive calculations with clear dependencies.',
     track: 'core-hooks',
-    problem: 'Repeated expensive computations slow down rerenders.',
-    reactTracks: 'React reuses the memoized value when dependencies are unchanged.',
+    problem:
+      'Repeated expensive calculations can make typing, filtering, and sorting feel sluggish because every rerender recomputes the same result. useMemo caches that computed result until its dependencies actually change.',
+    reactTracks:
+      'React stores the previous memoized value and dependency list, then reuses the cached value when dependencies are referentially equal. If any dependency changes, React recomputes and stores a new cached result.',
     explainLines: [
       'useMemo remembers a computed value between renders.',
       'React recalculates it only when listed dependencies change.',
@@ -372,15 +380,16 @@ const visibleItems = useMemoEnabled ? memoizedResult : directResult`,
       'Item count confirms filtered result while interaction reveals cost pattern.',
     ],
     commonMistake: 'Memoizing trivial values, adding complexity with little benefit.',
-    guidedChallenge:
-      'Add profiling marks to compare filtered list performance with and without memoization.',
+    implementationGuide:
+      'Build a product catalog with text search and category filters over a large list. Memoize the filtered dataset and any derived summary stats, then profile rerenders with and without memoization. This is a direct implementation pattern for dashboards and searchable admin tables.',
     practiceTasks: [
       'Add a large dataset and compare typed input responsiveness with and without memo.',
       'Identify dependencies precisely and remove non-essential ones.',
       'Memoize one object prop passed to a child and observe identity stability.',
       'Write down when you would remove useMemo from this component.',
     ],
-    recap: 'Memoization is a performance tool, not a correctness tool.',
+    recap:
+      'Memoization is a performance tool, not a correctness tool. Apply it when profiling shows repeated expensive work or unstable object identities causing rerenders, and keep dependencies precise. If the calculation is cheap, simpler code is usually better than extra memo layers.',
     understandingQuestions: [
       'What exactly is cached by useMemo, and when is cache invalidated?',
       'Why can overusing useMemo hurt readability more than it helps speed?',
@@ -408,8 +417,10 @@ const visibleItems = useMemoEnabled ? memoizedResult : directResult`,
     title: 'useCallback',
     tagline: 'Stabilize function identity when it matters.',
     track: 'core-hooks',
-    problem: 'Child components or effects rerun because callback references change every render.',
-    reactTracks: 'React reuses callback references when dependencies stay stable.',
+    problem:
+      'Child components and effects may rerun because callback references are recreated on each render. When those references are part of memoized prop contracts or effect dependencies, unstable identity can cause avoidable work.',
+    reactTracks:
+      'React keeps the previous function reference and dependency list for useCallback. If dependencies are unchanged, the same function object is reused; otherwise React creates a new function for the latest closure values.',
     explainLines: [
       'useCallback keeps the same function reference between renders.',
       'This helps when children are memoized or effects depend on callback identity.',
@@ -444,14 +455,16 @@ const onSelectA = useCallbackEnabled ? stableSelectA : inlineSelectA
     ],
     commonMistake:
       'Using useCallback everywhere rather than where referential stability is needed.',
-    guidedChallenge: 'Pair memoized children with callbacks and observe rerender differences.',
+    implementationGuide:
+      'Create a filter toolbar component that passes handlers into memoized child buttons. Stabilize handlers with useCallback only where memoized children or effects depend on identity. This mirrors reusable component libraries where prop stability matters for performance.',
     practiceTasks: [
       'Add a third memoized child and observe prop identity behavior in both modes.',
       'Introduce one callback with dependencies and explain why they are required.',
       'Move one inline callback to useCallback only if it changes rerender behavior.',
       'Write a rule of thumb for when to keep inline callbacks.',
     ],
-    recap: 'Callback memoization is for inter-component contracts and effect dependencies.',
+    recap:
+      'Callback memoization is most useful for inter-component contracts and effect dependency stability. Use it selectively where function identity has measurable impact, and keep dependencies complete to avoid stale closures. Prefer clear inline handlers until a real identity-related cost appears.',
     understandingQuestions: [
       'How is useCallback related to useMemo under the hood?',
       'Why can stable callback identity reduce rerenders for memoized children?',

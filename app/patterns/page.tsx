@@ -29,9 +29,12 @@ export default function PatternsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-sm text-muted-foreground">
+          <ul className="grid gap-2 rounded-xl bg-[linear-gradient(180deg,oklch(0.99_0.008_84/.88),oklch(0.975_0.014_210/.62))] p-3 text-sm text-muted-foreground">
             {plannedPatterns.map((pattern) => (
-              <li key={pattern} className="rounded-md border bg-background px-3 py-2">
+              <li
+                key={pattern}
+                className="rounded-lg bg-background/90 px-3 py-2.5 shadow-[inset_0_0_0_1px_oklch(0.76_0.018_230/.42)]"
+              >
                 {pattern}
               </li>
             ))}

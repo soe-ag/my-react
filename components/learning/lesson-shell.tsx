@@ -99,14 +99,17 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
               <CardHeader>
                 <CardTitle>Core Explanation</CardTitle>
                 <CardDescription>
-                  Read these five lines in sequence before jumping to interaction.
+                  Read these key lines in sequence before jumping to interaction.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm leading-7 text-muted-foreground">
+                <ul className="space-y-3 text-sm leading-7 text-muted-foreground">
                   {lesson.explainLines.map((line) => (
-                    <li key={line} className="rounded-md border bg-background px-3 py-2">
-                      {line}
+                    <li key={line} className="grid grid-cols-[0.5rem_1fr] gap-x-3">
+                      <span aria-hidden className="flex h-7 items-center">
+                        <span className="h-2 w-2 rounded-full bg-[oklch(0.62_0.19_225)]" />
+                      </span>
+                      <span className="-mt-px text-foreground/85">{line}</span>
                     </li>
                   ))}
                 </ul>
@@ -136,16 +139,24 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
+                <p className="rounded-xl bg-[linear-gradient(140deg,oklch(1_0_0/.86),oklch(0.97_0.02_72/.7))] px-4 py-3 text-sm text-muted-foreground shadow-[inset_0_0_0_1px_oklch(0.78_0.02_220/.34)]">
                   Goal: {lesson.exploreGoal}
                 </p>
-                <ol className="space-y-2 text-sm leading-7 text-muted-foreground">
+                <ol className="relative ml-1 space-y-4 text-sm leading-7 text-muted-foreground">
                   {lesson.exploreSteps.map((step, index) => (
-                    <li key={step} className="rounded-md border bg-background px-3 py-2">
-                      <span className="mr-2 inline-block font-semibold text-foreground/80">
-                        Step {index + 1}:
+                    <li key={step} className="grid grid-cols-[1.5rem_1fr] gap-x-3">
+                      <span className="relative flex justify-center">
+                        <span className="relative z-10 mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-[oklch(0.9_0.04_230)] text-xs font-semibold text-foreground/80">
+                          {index + 1}
+                        </span>
+                        {index < lesson.exploreSteps.length - 1 ? (
+                          <span
+                            aria-hidden
+                            className="absolute top-7 bottom-[-1rem] w-px bg-foreground/15"
+                          />
+                        ) : null}
                       </span>
-                      {step}
+                      <span className="-mt-px text-foreground/85">{step}</span>
                     </li>
                   ))}
                 </ol>
@@ -161,13 +172,17 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <LessonCodeBlock code={lesson.exploreCode} />
-                <p className="text-sm font-medium text-foreground/85">
+                <p className="pt-2 text-sm font-semibold text-foreground/90">
                   What to watch while testing
                 </p>
-                <ul className="mt-3 space-y-2 text-sm leading-7 text-muted-foreground">
+                <ul className="grid gap-2 rounded-xl border bg-background/60 p-4 text-sm leading-6 text-muted-foreground md:grid-cols-2">
                   {lesson.exploreNotes.map((note) => (
-                    <li key={note} className="rounded-md border bg-background px-3 py-2">
-                      {note}
+                    <li key={note} className="flex items-start gap-2 rounded-md px-1 py-1">
+                      <span
+                        aria-hidden
+                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground/40"
+                      />
+                      <span>{note}</span>
                     </li>
                   ))}
                 </ul>
@@ -189,11 +204,13 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
             </Card>
             <Card className="border-white/30 bg-[linear-gradient(160deg,oklch(1_0_0/.92),oklch(0.96_0.02_68/.84))] shadow-[0_8px_24px_oklch(0.45_0.08_186/0.12)]">
               <CardHeader>
-                <CardTitle>Guided Challenge</CardTitle>
-                <CardDescription>Build a tiny exercise and explain your reasoning.</CardDescription>
+                <CardTitle>Similar Implementation Idea</CardTitle>
+                <CardDescription>
+                  Use this as a practical pattern you can build by adapting the same hook strategy.
+                </CardDescription>
               </CardHeader>
               <CardContent className="text-sm leading-7 text-muted-foreground">
-                {lesson.guidedChallenge}
+                {lesson.implementationGuide}
               </CardContent>
             </Card>
             <Card className="border-white/30 bg-[linear-gradient(160deg,oklch(1_0_0/.92),oklch(0.96_0.02_68/.84))] shadow-[0_8px_24px_oklch(0.45_0.08_186/0.12)] md:col-span-2">
@@ -204,10 +221,13 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm leading-7 text-muted-foreground">
+                <ul className="grid gap-2 rounded-xl bg-[linear-gradient(180deg,oklch(0.99_0.008_84/.88),oklch(0.975_0.014_210/.62))] p-3 text-sm leading-7 text-muted-foreground">
                   {lesson.practiceTasks.map((task) => (
-                    <li key={task} className="rounded-md border bg-background px-3 py-2">
-                      {task}
+                    <li
+                      key={task}
+                      className="rounded-lg bg-background/90 px-3 py-2.5 shadow-[inset_0_0_0_1px_oklch(0.76_0.018_230/.42)]"
+                    >
+                      <span className="font-medium text-foreground/85">→</span> {task}
                     </li>
                   ))}
                 </ul>
@@ -233,7 +253,7 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
                   value={challengeAnswer}
                   onChange={(event) => setChallengeAnswer(lesson.slug, event.target.value)}
                   placeholder="Write your understanding in your own words..."
-                  className="min-h-28 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="min-h-28 w-full rounded-xl bg-[linear-gradient(145deg,oklch(1_0_0/.9),oklch(0.97_0.018_210/.72))] px-3 py-2 text-sm shadow-[inset_0_0_0_1px_oklch(0.76_0.02_230/.42)] outline-none ring-0 transition focus:shadow-[inset_0_0_0_1.5px_oklch(0.62_0.18_230/.55)]"
                 />
               </CardContent>
             </Card>
@@ -252,9 +272,12 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
               <CardContent>
                 <ul className="space-y-2 text-sm leading-7 text-muted-foreground">
                   {lesson.understandingQuestions.map((question, index) => (
-                    <li key={question} className="rounded-md border bg-background">
+                    <li
+                      key={question}
+                      className="overflow-hidden rounded-xl bg-[linear-gradient(150deg,oklch(1_0_0/.88),oklch(0.97_0.016_212/.66))] shadow-[inset_0_0_0_1px_oklch(0.78_0.02_220/.34)]"
+                    >
                       <details className="group">
-                        <summary className="list-none rounded-t-md bg-accent/25 px-3 py-2 font-medium transition-colors group-open:bg-accent/35 hover:bg-accent/35">
+                        <summary className="list-none rounded-t-xl bg-accent/22 px-3 py-2 font-medium transition-colors group-open:bg-accent/32 hover:bg-accent/30">
                           <span className="mr-2 inline-block text-xs text-muted-foreground">
                             Q{index + 1}
                           </span>
@@ -279,9 +302,12 @@ export function LessonShell({ lesson, interactivePanel }: LessonShellProps) {
               <CardContent>
                 <ul className="space-y-2 text-sm leading-7 text-muted-foreground">
                   {lesson.interviewQuestions.map((question, index) => (
-                    <li key={question} className="rounded-md border bg-background">
+                    <li
+                      key={question}
+                      className="overflow-hidden rounded-xl bg-[linear-gradient(150deg,oklch(1_0_0/.88),oklch(0.97_0.016_212/.66))] shadow-[inset_0_0_0_1px_oklch(0.78_0.02_220/.34)]"
+                    >
                       <details className="group">
-                        <summary className="list-none rounded-t-md bg-accent/25 px-3 py-2 font-medium transition-colors group-open:bg-accent/35 hover:bg-accent/35">
+                        <summary className="list-none rounded-t-xl bg-accent/22 px-3 py-2 font-medium transition-colors group-open:bg-accent/32 hover:bg-accent/30">
                           <span className="mr-2 inline-block text-xs text-muted-foreground">
                             Q{index + 1}
                           </span>

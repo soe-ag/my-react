@@ -15,7 +15,7 @@ const ChildButton = memo(function ChildButton({ label, onSelect }: ChildButtonPr
     <button
       type="button"
       onClick={onSelect}
-      className="rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent"
+      className="rounded-lg bg-[linear-gradient(145deg,oklch(0.995_0.01_86),oklch(0.97_0.02_214/.85))] px-3 py-2 text-sm font-medium text-foreground/90 shadow-[inset_0_0_0_1px_oklch(0.76_0.02_230/.42)] transition hover:brightness-[0.98]"
     >
       {label}
     </button>
